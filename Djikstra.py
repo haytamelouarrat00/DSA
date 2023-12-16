@@ -41,35 +41,57 @@ class Djikstra:
 
     def find_shortest_path(self, start, end):
         if self.is_weighted:
+            shortest_path = []
             self.unvisited = list(self.graph.keys())
             neighbors = self.get_neighbors(start)
             dictdist = {start: 0}
+            prev_node = {start: None}
+
             for vertex in self.unvisited:
                 if vertex != start:
                     dictdist[vertex] = float('inf')
+
             for neighbor in neighbors:
                 dictdist[neighbor] = self.get_distance(start, neighbor)
+                prev_node[neighbor] = start
 
             self.visited.append(start)
             self.unvisited.remove(start)
+
             while self.unvisited:
                 minvertex = min(self.unvisited, key=dictdist.get)
                 self.visited.append(minvertex)
                 self.unvisited.remove(minvertex)
+
                 for neighbor in self.get_neighbors(minvertex):
                     if neighbor in self.unvisited:
-                        if dictdist[minvertex] + self.get_distance(minvertex, neighbor) < dictdist[neighbor]:
-                            dictdist[neighbor] = dictdist[minvertex] + self.get_distance(minvertex, neighbor)
-                print(dictdist)
+                        new_distance = dictdist[minvertex] + self.get_distance(minvertex, neighbor)
+                        if new_distance < dictdist[neighbor]:
+                            dictdist[neighbor] = new_distance
+                            prev_node[neighbor] = minvertex
+
+            # Reconstruct the shortest path
+            current_node = end
+            while current_node is not None:
+                shortest_path.insert(0, current_node)
+                current_node = prev_node[current_node]
+
+            return dictdist[end], shortest_path
 
     def __str__(self):
         return str(self.graph)
 
     def print_graph(self):
         for vertex, neighbors in self.graph.items():
-            print(f"{vertex}:")
-            for neighbor, weight in neighbors.items():
-                print(f"  -> {neighbor}{' (Weight: ' + str(weight) + ')' if self.is_weighted else ''}")
+            print(f"Node {vertex}:")
+            if neighbors:
+                for neighbor, weight in neighbors.items():
+                    if self.is_weighted:
+                        print(f"  -> Edge to {neighbor} (Weight: {weight})")
+                    else:
+                        print(f"  -> Edge to {neighbor}")
+            else:
+                print("  -> No outgoing edges")
 
 
 # Test Case 1: Unweighted, Undirected Graph
@@ -97,7 +119,9 @@ d.add_edge('G', 'D', 1)
 d.add_edge('A', 'G', -2)
 
 d.print_graph()
-d.find_shortest_path('A', 'D')
+distance, path = d.find_shortest_path('E', 'A')
+print(f"Shortest Distance: {distance}")
+print(f"Shortest Path: {path}")
 print("\n")
 
 """# Test Case 2: Weighted, Directed Graph
