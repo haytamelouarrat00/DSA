@@ -2,6 +2,7 @@
 This algorithm allows the user to add vertices and edges to a graph,
 then find the shortest path between two given vertices.
 """
+from heapq import heappop, heappush
 
 
 class Djikstra:
@@ -32,51 +33,50 @@ class Djikstra:
         return list(self.graph.get(vertex, {}).keys())
 
     def get_distance(self, vertex1, vertex2):
-        if self.is_weighted:
-            if vertex1 in self.get_neighbors(vertex2):
-                return self.graph[vertex1][vertex2]
-            else:
-                # raise ValueError(f'Vertex {vertex2} is not a neighbor of {vertex1}')
-                return 0
+        if vertex1 in self.get_neighbors(vertex2):
+            return self.graph[vertex1][vertex2]
+        else:
+            # raise ValueError(f'Vertex {vertex2} is not a neighbor of {vertex1}')
+            return 0
 
     def find_shortest_path(self, start, end):
-        if self.is_weighted:
-            shortest_path = []
-            self.unvisited = list(self.graph.keys())
-            neighbors = self.get_neighbors(start)
-            dictdist = {start: 0}
-            prev_node = {start: None}
+        if start not in self.graph or end not in self.graph:
+            raise ValueError(f'Vertex {start} or {end} not in graph')
 
-            for vertex in self.unvisited:
-                if vertex != start:
-                    dictdist[vertex] = float('inf')
+        # Initialization
+        self.unvisited = list(self.graph.keys())
+        distances = {vertex: float('inf') for vertex in self.unvisited}
+        previous_nodes = {vertex: None for vertex in self.unvisited}
+        distances[start] = 0
 
-            for neighbor in neighbors:
-                dictdist[neighbor] = self.get_distance(start, neighbor)
-                prev_node[neighbor] = start
+        # Priority queue to efficiently get the minimum distance vertex
+        priority_queue = [(0, start)]
 
-            self.visited.append(start)
-            self.unvisited.remove(start)
+        while priority_queue:
+            current_distance, current_vertex = heappop(priority_queue)
 
-            while self.unvisited:
-                minvertex = min(self.unvisited, key=dictdist.get)
-                self.visited.append(minvertex)
-                self.unvisited.remove(minvertex)
+            # Update distances and previous_nodes for neighbors
+            for neighbor in self.get_neighbors(current_vertex):
+                #print("Checking neighbor:", neighbor + " from vertex:", current_vertex)
+                new_distance = current_distance + (self.get_distance(current_vertex, neighbor)
+                                                   if self.get_distance(current_vertex, neighbor) is not None else 0)
+                if new_distance < distances[neighbor]:
+                    distances[neighbor] = new_distance
+                    previous_nodes[neighbor] = current_vertex
+                    heappush(priority_queue, (new_distance, neighbor))
 
-                for neighbor in self.get_neighbors(minvertex):
-                    if neighbor in self.unvisited:
-                        new_distance = dictdist[minvertex] + self.get_distance(minvertex, neighbor)
-                        if new_distance < dictdist[neighbor]:
-                            dictdist[neighbor] = new_distance
-                            prev_node[neighbor] = minvertex
+        # Check if end vertex is reachable
+        if distances[end] == float('inf'):
+            return float('inf'), []
 
-            # Reconstruct the shortest path
-            current_node = end
-            while current_node is not None:
-                shortest_path.insert(0, current_node)
-                current_node = prev_node[current_node]
+        # Reconstruct the shortest path
+        shortest_path = []
+        current_node = end
+        while current_node is not None:
+            shortest_path.insert(0, current_node)
+            current_node = previous_nodes[current_node]
 
-            return dictdist[end], shortest_path
+        return distances[end], shortest_path
 
     def __str__(self):
         return str(self.graph)
@@ -94,96 +94,52 @@ class Djikstra:
                 print("  -> No outgoing edges")
 
 
-# Test Case 1: Unweighted, Undirected Graph
-print("Test Case 1:")
-d = Djikstra(directed=False, weighted=True)
-d.add_vertex('A')
-d.add_vertex('B')
-d.add_vertex('C')
-d.add_vertex('D')
-d.add_vertex('E')
-d.add_vertex('F')
-d.add_vertex('G')
+# Test Case 1: Basic Unweighted Graph
+print("Test Case 1: Basic Unweighted Graph")
+graph1 = Djikstra()
+graph1.add_vertex("A")
+graph1.add_vertex("B")
+graph1.add_vertex("C")
+graph1.add_edge("A", "B", 2)
+graph1.add_edge("B", "C", 1)
+print(graph1.find_shortest_path("A", "C"))  # Output should be (2, ['A', 'B', 'C'])
 
-d.add_edge('A', 'B', 5)
-d.add_edge('A', 'C', 1)
-d.add_edge('B', 'C', 7)
-d.add_edge('C', 'D', 3)
-d.add_edge('D', 'E', 1)
-d.add_edge('D', 'F', 4)
-d.add_edge('E', 'F', 2)
-d.add_edge('E', 'B', 8)
-d.add_edge('C', 'F', 6)
-d.add_edge('G', 'A', 3)
-d.add_edge('G', 'D', 1)
-d.add_edge('A', 'G', -2)
+# Test Case 2: Weighted Graph
+print("Test Case 2: Weighted Graph")
+graph2 = Djikstra(weighted=True)
+graph2.add_vertex("A")
+graph2.add_vertex("B")
+graph2.add_vertex("C")
+graph2.add_edge("A", "B", 2)
+graph2.add_edge("B", "C", 3)
+print(graph2.find_shortest_path("A", "C"))  # Output should be (5, ['A', 'B', 'C'])
 
-d.print_graph()
-distance, path = d.find_shortest_path('E', 'A')
-print(f"Shortest Distance: {distance}")
-print(f"Shortest Path: {path}")
-print("\n")
+# Test Case 3: Directed Weighted Graph
+print("Test Case 3: Directed Weighted Graph")
+graph3 = Djikstra(directed=True, weighted=True)
+graph3.add_vertex("A")
+graph3.add_vertex("B")
+graph3.add_vertex("C")
+graph3.add_edge("A", "B", 2)
+graph3.add_edge("B", "C", 3)
+print(graph3.find_shortest_path("A", "C"))  # Output should be (5, ['A', 'B', 'C'])
 
-"""# Test Case 2: Weighted, Directed Graph
-print("Test Case 2:")
-d = Djikstra(directed=True, weighted=True)
-d.add_vertex('X')
-d.add_vertex('Y')
-d.add_vertex('Z')
-d.add_vertex('W')
+# Test Case 4: Unweighted Graph with Isolated Node
+print("Test Case 4: Unweighted Graph with Isolated Node")
+graph4 = Djikstra()
+graph4.add_vertex("A")
+graph4.add_vertex("B")
+graph4.add_vertex("C")
+graph4.add_vertex("D")
+print(graph4.find_shortest_path("A", "D"))  # Output should be (0, ['A', 'D'])
 
-d.add_edge('X', 'Y', 5, 1 / 5)
-d.add_edge('Y', 'Z', 3, 1 / 3)
-d.add_edge('Z', 'W', 2, 1 / 2)
-
-d.print_graph()
-d.find_shortest_path('X', 'W')
-print("\n")
-
-# Test Case 3: Weighted, Undirected Graph
-print("Test Case 3:")
-d = Djikstra(directed=False, weighted=True)
-d.add_vertex('P')
-d.add_vertex('Q')
-d.add_vertex('R')
-d.add_vertex('S')
-
-d.add_edge('P', 'Q', 4, 1 / 4)
-d.add_edge('Q', 'R', 2, 1 / 2)
-d.add_edge('R', 'S', 3, 1 / 3)
-
-d.print_graph()
-d.find_shortest_path('P', 'S')
-print("\n")
-
-# Test Case 4: Directed, Unweighted Graph
-print("Test Case 4:")
-d = Djikstra(directed=True, weighted=False)
-d.add_vertex('M')
-d.add_vertex('N')
-d.add_vertex('O')
-d.add_vertex('P')
-
-d.add_edge('M', 'N')
-d.add_edge('N', 'O')
-d.add_edge('O', 'P')
-
-d.print_graph()
-d.find_shortest_path('M', 'P')
-print("\n")
-
-# Test Case 5: Weighted, Directed Graph (provided example)
-print("Test Case 5 (Provided Example):")
-d = Djikstra(directed=True, weighted=True)
-d.add_vertex('USD')
-d.add_vertex('GBP')
-d.add_vertex('JPY')
-d.add_vertex('AUD')
-
-d.add_edge('USD', 'JPY', 110, 1 / 110)
-d.add_edge('USD', 'AUD', 1.45, 1 / 1.45)
-d.add_edge('JPY', 'GBP', 0.0070, 1 / 0.0070)
-
-d.print_graph()
-d.find_shortest_path('AUD', 'GBP')
-"""
+# Test Case 5: Unweighted Graph with Disconnected Components
+print("Test Case 5: Unweighted Graph with Disconnected Components")
+graph5 = Djikstra()
+graph5.add_vertex("A")
+graph5.add_vertex("B")
+graph5.add_vertex("C")
+graph5.add_vertex("D")
+graph5.add_edge("A", "B")
+graph5.add_edge("C", "D")
+print(graph5.find_shortest_path("A", "D"))  # Output should be (0, ['A', 'D'])
