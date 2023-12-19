@@ -8,7 +8,6 @@ This repository contains implementations and explanations of various data struct
 - [Content](#content)
 - [How to Use](#how-to-use)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## Introduction
 
