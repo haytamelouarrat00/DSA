@@ -19,7 +19,6 @@ class Graph:
         if not self.is_directed:
             self.graph[end][start] = True
 
-
     def get_neighbors(self, vertex):
         return list(self.graph.get(vertex, {}).keys())
 
@@ -51,8 +50,6 @@ class Graph:
         return processed
 
 
-
-
 g = Graph(directed=True)
 g.add_node('A', 5)
 g.add_node('B', 10)
@@ -60,7 +57,6 @@ g.add_node('C', 7)
 g.add_node('D', 3)
 g.add_node('E', 2)
 g.add_node('F', 1)
-
 
 g.add_edge('A', 'B')
 g.add_edge('B', 'C')
