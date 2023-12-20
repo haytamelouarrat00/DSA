@@ -1,12 +1,26 @@
 from Graph import *
-def BFS(Graph, start):
+
+
+def BFS(Grph, start):
     queue = [start]
     processed = []
     while queue:
         vertex = queue.pop(0)
         if vertex not in processed:
             processed.append(vertex)
-            queue.extend(neighbor for neighbor in Graph.get_neighbors(vertex) if neighbor not in processed)
+            queue.extend(neighbor for neighbor in Grph.get_neighbors(vertex) if neighbor not in processed)
+
+    return processed
+
+
+def DFS(Grph, start):
+    stack = [start]
+    processed = []
+    while stack:
+        vertex = stack.pop()
+        if vertex not in processed:
+            processed.append(vertex)
+            stack.extend(neighbor for neighbor in Grph.get_neighbors(vertex) if neighbor not in processed)
 
     return processed
 
@@ -29,6 +43,14 @@ graph_directed.add_edge('B', 'E')
 graph_directed.add_edge('A', 'D')
 graph_directed.add_edge('D', 'F')
 
+"""
+        A
+       / \
+      B   D
+     / \   \
+    C   E   F
+"""
+
 # Test BFS on directed graph
 print(BFS(graph_directed, 'A'))
 # Expected output: ['A', 'B', 'D', 'C', 'E', 'F']
@@ -45,9 +67,21 @@ graph_undirected.add_node('Z', 4)
 graph_undirected.add_edge('X', 'Y')
 graph_undirected.add_edge('Y', 'Z')
 
+"""
+    X
+    |
+    Y
+    |
+    Z
+"""
 # Test BFS on undirected graph
-print(BFS(graph_directed, 'X'))
+print(BFS(graph_undirected, 'X'))
 # Expected output: ['X', 'Y', 'Z']
 
+# Test DFS on directed graph
+print(DFS(graph_directed, 'A'))
+# Expected output: ['A', 'D', 'F', 'B', 'E', 'C']
 
-# g.print_graph()
+# Test DFS on undirected graph
+print(DFS(graph_undirected, 'X'))
+# Expected output: ['X', 'Y', 'Z']

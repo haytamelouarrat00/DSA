@@ -20,3 +20,6 @@ class Graph:
 
     def get_weight(self, vertex):
         return self.node_weights[vertex]
+
+    def print_graph(self):
+        print(self.graph)
