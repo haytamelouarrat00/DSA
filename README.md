@@ -27,9 +27,9 @@ This repository serves as a resource for learning and understanding fundamental 
 
 ### Algorithms
 
-- [Searching Algorithms](#)
-- [Sorting Algorithms](#)
-- [Graph Algorithms](#)
+- [Searching Algorithms](/src/Algorithms/SearchAlgorithms.py)
+- [Sorting Algorithms]()
+- [Graph Algorithms](/src/Algorithms/GraphAlgorithms)
 - [Dynamic Programming](#)
 
 ## How to Use
