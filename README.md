@@ -18,17 +18,17 @@ This repository serves as a resource for learning and understanding fundamental 
 
 ### Data Structures
 
-- [Linked List](#)
-- [Stack](#)
-- [Queue](#)
-- [Binary Tree](#)
-- [Hash Table](#)
-- [Graph](#)
+- [Linked List](/src/DataStructures/LinkedList.py)
+- [Stack](/src/DataStructures/Stack.py)
+- [Queue](/src/DataStructures/Queue.py)
+- [Binary Tree](/src/DataStructures/BinaryTree.py)
+- [Hash Table](/src/DataStructures/HashTable.py)
+- [Graph](/src/DataStructures/Graph.py)
 
 ### Algorithms
 
 - [Searching Algorithms](/src/Algorithms/SearchAlgorithms.py)
-- [Sorting Algorithms]()
+- [Sorting Algorithms](/src/Algorithms/SortingAlgorithms.py)
 - [Graph Algorithms](/src/Algorithms/GraphAlgorithms)
 - [Dynamic Programming](#)
 
@@ -36,7 +36,4 @@ This repository serves as a resource for learning and understanding fundamental 
 
 Each data structure and algorithm has its own file with a corresponding explanation and implementation in Python. You can navigate to the `src` directory to explore the source code.
 
-To run the Python files locally, you can use the following command:
 
-```bash
-python filename.py

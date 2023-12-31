@@ -4,6 +4,7 @@ then find the shortest path between two given vertices.
 """
 from heapq import heappop, heappush
 
+
 class Djikstra:
     def __init__(self, directed=False, weighted=False):
         self.is_directed = directed
@@ -56,7 +57,7 @@ class Djikstra:
 
             # Update distances and previous_nodes for neighbors
             for neighbor in self.get_neighbors(current_vertex):
-                #print("Checking neighbor:", neighbor + " from vertex:", current_vertex)
+                # print("Checking neighbor:", neighbor + " from vertex:", current_vertex)
                 new_distance = current_distance + (self.get_distance(current_vertex, neighbor)
                                                    if self.get_distance(current_vertex, neighbor) is not None else 0)
                 if new_distance < distances[neighbor]:
